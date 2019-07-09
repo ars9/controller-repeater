@@ -16,12 +16,13 @@ export function Repeater(options?: {
     tasks: [],
   };
   return target => {
-    const taskmaster = new RepeaterInstance(data);
-
     /* Extend class prototype to start taskmaster in constructor */
     return class extends target.prototype.constructor {
       constructor(...args: any[]) {
         super(...args);
+
+        const taskmaster = new RepeaterInstance(data);
+
         taskmaster.start();
         taskmaster.setOrigin(this);
 
@@ -33,9 +34,6 @@ export function Repeater(options?: {
             taskmaster.addTask(taskName, task.function, task.interval, task.payload || []);
           }
         }
-      }
-      get taskmaster() {
-        return taskmaster;
       }
     } as any;
   };

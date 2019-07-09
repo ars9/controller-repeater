@@ -103,4 +103,19 @@ describe('controller-repeater', () => {
     /* Expect value to be incremented by set payload */
     expect(t.counter).toEqual(11);
   });
+
+  it('should work with multiple object instances', async () => {
+    @Repeater()
+    class Test5 {
+      public counter = 0;
+
+      @RepeaterTask()
+      public increment() {
+        this.counter++;
+      }
+    }
+
+    const t1 = new Test5();
+    const t2 = new Test5();
+  });
 });
