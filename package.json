@@ -1,6 +1,10 @@
 {
   "name": "controller-repeater",
   "version": "0.9.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ars9/controller-repeater"
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
