@@ -118,4 +118,24 @@ describe('controller-repeater', () => {
     const t1 = new Test5();
     const t2 = new Test5();
   });
+
+  it('should not execute task if it is still running', async () => {
+    @Repeater()
+    class Test6 {
+      public counter = 0;
+
+      @RepeaterTask()
+      public async increment() {
+        this.counter++;
+        await delay(1000);
+      }
+    }
+
+    const t = new Test6();
+    expect(t.counter).toEqual(0);
+
+    await delay(1000);
+
+    expect(t.counter).toEqual(1);
+  });
 });
