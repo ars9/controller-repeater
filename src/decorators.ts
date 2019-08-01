@@ -1,11 +1,11 @@
 import { RepeaterInstance } from './instance';
-import { ErrorCatcher, IRepeaterConfig, TaskPayload } from './types';
+import { ErrorCatcherAsync, ErrorCatcherSync, IRepeaterConfig, TaskPayload } from './types';
 
 const TASKMASTER_TASKS = '__taskmaster_tasks';
 
 export function Repeater(options?: {
   heartbeatInterval?: number;
-  errorCatcher?: ErrorCatcher;
+  errorCatcher?: ErrorCatcherSync | ErrorCatcherAsync;
 }): ClassDecorator {
   if (!options) {
     options = {};

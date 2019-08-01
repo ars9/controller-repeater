@@ -1,5 +1,6 @@
 import {
-  ErrorCatcher,
+  ErrorCatcherAsync,
+  ErrorCatcherSync,
   IRepeaterConfig,
   RepeaterTaskFunction,
   TaskName,
@@ -12,13 +13,19 @@ export class RepeaterInstance {
   private tasks: Record<TaskName, { function: RepeaterTaskFunction; payload?: TaskPayload }>;
   private isBusy: boolean = false;
   private intervalId: number;
-  private errorCatcher?: ErrorCatcher;
+  private errorCatcher: ErrorCatcherSync | ErrorCatcherAsync;
   private origin: any;
 
   constructor(data: IRepeaterConfig) {
     this.heartbeatInterval = data.heartbeatInterval || 100;
     this.tasks = {};
-    this.errorCatcher = data.errorCatcher;
+
+    if (typeof data.errorCatcher === 'function') {
+      this.errorCatcher = data.errorCatcher;
+    } else {
+      /* tslint:disable-next-line:no-console */
+      this.errorCatcher = (error, fnName) => console.error(`[${fnName}] ${error.stack}`);
+    }
   }
 
   public setOrigin(origin: any) {
@@ -63,7 +70,7 @@ export class RepeaterInstance {
         interval || 0,
         task.bind(this.origin),
         `${this.origin.constructor.name}.${task.name}`,
-        this.errorCatcher,
+        this.errorCatcher.bind(this.origin),
       ),
       payload,
     };

@@ -211,4 +211,34 @@ describe('controller-repeater', () => {
 
     consoleSpy.mockRestore();
   });
+
+  it('should correctly use supplemented error catcher', async () => {
+    @Repeater({
+      errorCatcher() {
+        this.errors++;
+      },
+    })
+    class Test8 {
+      public counter = 0;
+      public errors = 0;
+
+      @RepeaterTask()
+      public increment() {
+        this.counter++;
+        throw new Error('oops');
+      }
+    }
+
+    const t = new Test8();
+    expect(t.counter).toEqual(0);
+
+    /* Wait for execution */
+    await delay(10);
+
+    /* Expect to have task been called */
+    expect(t.counter).toBe(1);
+
+    /* Expect error counter to be incremented */
+    expect(t.errors).toBe(1);
+  });
 });
