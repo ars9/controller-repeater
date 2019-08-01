@@ -59,7 +59,12 @@ export class RepeaterInstance {
       throw new Error(`Task interval can't be shorter than heartbeat interval`);
     }
     this.tasks[name] = {
-      function: throttler(interval || 0, task.bind(this.origin), this.errorCatcher),
+      function: throttler(
+        interval || 0,
+        task.bind(this.origin),
+        `${this.origin.constructor.name}.${task.name}`,
+        this.errorCatcher,
+      ),
       payload,
     };
     return this;
@@ -67,9 +72,9 @@ export class RepeaterInstance {
 
   private async processTasks() {
     await Promise.all(
-      Object.keys(this.tasks).map(taskName => {
+      Object.keys(this.tasks).map(async taskName => {
         const task = this.tasks[taskName];
-        task.function.apply(this.origin, task.payload);
+        await task.function.apply(this.origin, task.payload);
       }),
     );
   }

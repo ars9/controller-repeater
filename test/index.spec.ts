@@ -139,7 +139,7 @@ describe('controller-repeater', () => {
     expect(t.counter).toEqual(1);
   });
 
-  it('should output exception stack to console if catcher is not set up', async () => {
+  it('should output exception stack to console if catcher is not set up (sync method)', async () => {
     @Repeater()
     class Test7 {
       public counter = 0;
@@ -170,7 +170,44 @@ describe('controller-repeater', () => {
     expect(errorMessage).toContain(`oops`);
 
     /* Expect that called method is mentioned in output */
-    expect(errorMessage).toContain(`Object.increment`);
+    expect(errorMessage).toContain(`Test7.increment`);
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should output exception stack to console if catcher is not set up (async method)', async () => {
+    @Repeater()
+    class Test7 {
+      public counter = 0;
+
+      @RepeaterTask()
+      public async increment() {
+        await delay(1);
+        this.counter++;
+        throw new Error('oops');
+      }
+    }
+
+    const consoleSpy = jest.spyOn(console, 'error');
+
+    /* Intercept message in console.error */
+    let errorMessage;
+    consoleSpy.mockImplementation(message => (errorMessage = message));
+
+    const t = new Test7();
+    expect(t.counter).toEqual(0);
+
+    /* Wait for execution */
+    await delay(10);
+
+    /* Expect to have an error console output */
+    expect(consoleSpy).toBeCalledTimes(1);
+
+    /* Expect that error message is mentioned in output */
+    expect(errorMessage).toContain(`oops`);
+
+    /* Expect that called method is mentioned in output */
+    expect(errorMessage).toContain(`Test7.increment`);
 
     consoleSpy.mockRestore();
   });

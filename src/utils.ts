@@ -5,6 +5,7 @@ export async function delay(duration: number) {
 export function throttler<R, A extends any[]>(
   interval: number,
   fn: (...args: A) => R,
+  fnName: string,
   errorCatcher?: (error: Error, fnName?: string, args?: A) => void,
 ) {
   let then: number;
@@ -12,30 +13,26 @@ export function throttler<R, A extends any[]>(
 
   if (!errorCatcher) {
     /* tslint:disable-next-line */
-    errorCatcher = (error, fnName) => console.error(error.stack);
+    errorCatcher = (error, fnName) => console.error(`[${fnName}] ${error.stack}`);
   }
 
-  return (...args: A): R => {
+  return async (...args: A): Promise<R> => {
     if (isRunning) {
       return;
     }
+
     const now = Date.now();
-    if (!then || now - then > interval) {
-      isRunning = true;
-      then = now;
-      try {
-        const result = fn(...args);
-        if (result instanceof Promise) {
-          result.catch(error => errorCatcher(error, fn.name, args));
-          result.finally(() => (isRunning = false));
-        } else {
-          isRunning = false;
-        }
-        return result;
-      } catch (error) {
-        errorCatcher(error, fn.name, args);
-        isRunning = false;
-      }
+    if (then && !(now - then > interval)) {
+      return;
     }
+    then = now;
+
+    isRunning = true;
+    try {
+      await fn(...args);
+    } catch (error) {
+      errorCatcher(error, fnName, args);
+    }
+    isRunning = false;
   };
 }
