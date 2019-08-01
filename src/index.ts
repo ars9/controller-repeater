@@ -1,7 +1,8 @@
 export { Repeater, RepeaterTask } from './decorators';
 export { RepeaterInstance } from './instance';
 export {
-  ErrorCatcher,
+  ErrorCatcherAsync,
+  ErrorCatcherSync,
   IRepeaterConfig as ITaskmasterConfig,
   RepeaterTaskFunction,
   TaskName,
