@@ -4,7 +4,6 @@ import {
   getRepeaterInstance,
   RepeaterInstance,
   getRepeaterTasks,
-  RepeaterTaskFunction,
 } from '../src';
 import { delay } from '../src/utils';
 
