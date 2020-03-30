@@ -8,6 +8,19 @@ import {
 } from './types';
 import { throttler } from './utils';
 
+export const TASKMASTER_TASKS = '__taskmaster_tasks';
+export const TASKMASTER_INSTANCE_PROP = '__taskmaster_instance';
+
+export function getRepeaterInstance(object: any): RepeaterInstance {
+  return object[TASKMASTER_INSTANCE_PROP];
+}
+
+export function getRepeaterTasks(
+  object: any,
+): Record<TaskName, { function: RepeaterTaskFunction; interval?: number; payload?: TaskPayload }> {
+  return object[TASKMASTER_TASKS];
+}
+
 export class RepeaterInstance {
   private heartbeatInterval: number;
   private tasks: Record<TaskName, { function: RepeaterTaskFunction; payload?: TaskPayload }>;

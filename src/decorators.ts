@@ -1,7 +1,5 @@
-import { RepeaterInstance } from './instance';
+import { RepeaterInstance, TASKMASTER_TASKS, TASKMASTER_INSTANCE_PROP } from './instance';
 import { ErrorCatcherAsync, ErrorCatcherSync, IRepeaterConfig, TaskPayload } from './types';
-
-const TASKMASTER_TASKS = '__taskmaster_tasks';
 
 export function Repeater(options?: {
   heartbeatInterval?: number;
@@ -34,6 +32,8 @@ export function Repeater(options?: {
             taskmaster.addTask(taskName, task.function, task.interval, task.payload || []);
           }
         }
+
+        target.prototype[TASKMASTER_INSTANCE_PROP] = taskmaster;
       }
     } as any;
   };

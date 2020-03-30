@@ -1,4 +1,11 @@
-import { Repeater, RepeaterTask } from '../src';
+import {
+  Repeater,
+  RepeaterTask,
+  getRepeaterInstance,
+  RepeaterInstance,
+  getRepeaterTasks,
+  RepeaterTaskFunction,
+} from '../src';
 import { delay } from '../src/utils';
 
 /* tslint:disable:max-classes-per-file */
@@ -33,6 +40,14 @@ describe('controller-repeater', () => {
 
     /* Expect method to be called for 10 more times */
     expect(t.counter).toEqual(11);
+
+    const instance = getRepeaterInstance(t);
+    expect(instance).toBeInstanceOf(RepeaterInstance);
+
+    const tasks = getRepeaterTasks(t);
+    expect(tasks).toEqual({
+      increment: { function: expect.any(Function), interval: 0, payload: undefined },
+    });
   });
 
   it('should work with custom heartbeat', async () => {
@@ -169,15 +184,12 @@ describe('controller-repeater', () => {
     /* Expect that error message is mentioned in output */
     expect(errorMessage).toContain(`oops`);
 
-    /* Expect that called method is mentioned in output */
-    expect(errorMessage).toContain(`Test7.increment`);
-
     consoleSpy.mockRestore();
   });
 
   it('should output exception stack to console if catcher is not set up (async method)', async () => {
     @Repeater()
-    class Test7 {
+    class Test8 {
       public counter = 0;
 
       @RepeaterTask()
@@ -194,7 +206,7 @@ describe('controller-repeater', () => {
     let errorMessage;
     consoleSpy.mockImplementation(message => (errorMessage = message));
 
-    const t = new Test7();
+    const t = new Test8();
     expect(t.counter).toEqual(0);
 
     /* Wait for execution */
@@ -206,9 +218,6 @@ describe('controller-repeater', () => {
     /* Expect that error message is mentioned in output */
     expect(errorMessage).toContain(`oops`);
 
-    /* Expect that called method is mentioned in output */
-    expect(errorMessage).toContain(`Test7.increment`);
-
     consoleSpy.mockRestore();
   });
 
@@ -218,7 +227,7 @@ describe('controller-repeater', () => {
         this.errors++;
       },
     })
-    class Test8 {
+    class Test9 {
       public counter = 0;
       public errors = 0;
 
@@ -229,7 +238,7 @@ describe('controller-repeater', () => {
       }
     }
 
-    const t = new Test8();
+    const t = new Test9();
     expect(t.counter).toEqual(0);
 
     /* Wait for execution */

@@ -1,5 +1,5 @@
 export { Repeater, RepeaterTask } from './decorators';
-export { RepeaterInstance } from './instance';
+export { RepeaterInstance, getRepeaterInstance, getRepeaterTasks } from './instance';
 export {
   ErrorCatcherAsync,
   ErrorCatcherSync,
