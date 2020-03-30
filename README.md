@@ -43,3 +43,20 @@ const t = new Test1();
 
 console.log(t.counter); // 1
 ```
+
+### Instance management
+
+```typescript
+// Get an internal repeater instance
+const instance = getRepeaterInstance(t);
+
+// Stop repeater internal loop
+instance.stop(); 
+
+// Add a task to multiply a value by 2 every second
+let myValue = 1;
+instance.addTask('multiply', (factor) => myValue *= factor, 1000, [2]);
+
+// Start repeater internal loop again
+instance.start();
+```
